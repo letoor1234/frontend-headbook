@@ -25,6 +25,20 @@ export default class Login extends Component{
             pass: text
         })
     }
+
+    login=(event)=>{
+        fetch()
+        .then((res)=>{
+            res.json()
+        })
+        .then((confirm)=>{
+            if (confirm.loged[0] === 'true'){//review this lineee!!!
+                //redirect to user page and create session
+            } else {
+                //display alert with "no user or not password matches"
+            }
+        })
+    }
     render(){
         return(
             <Fragment>
