@@ -7,6 +7,7 @@ import {
 import Header from './components/Header'
 import Login from './components/Login'
 import NewAccount from './components/NewAccount'
+import User from './components/User'
 
 
 class App extends Component {
@@ -26,6 +27,14 @@ class App extends Component {
             classButton= 'btn-dark'
           />
           <NewAccount/>
+        </Route>
+        <Route path='/user'>
+          <Header
+            contentButton= 'Log Out'
+            enableButton= 'true'
+            classButton= 'btn-danger'
+          />
+          <User/>
         </Route>
       </Router>
     );

@@ -30,7 +30,7 @@ export default class Login extends Component{
             <Fragment>
                 <h2 className='mb-3 text-center fw-bold'>Login</h2>
                 <div className='d-flex justify-content-center'>
-                    <form className='' className='col-lg-3 col-md-6'>
+                    <form className='col-lg-3 col-md-6'>
                         <label className='fw-bold' htmlFor="user">User Name</label>
                         <input className='form-control mb-3'id='user'type="text" value={this.state.user} onChange={ (user)=>this.userChange(user) } />
 
