@@ -8,7 +8,8 @@ export default class Login extends Component{
         super(props)
         this.state={
             user: '',
-            pass: ''
+            pass: '',
+            resMsg: ''
         }
     }
     userChange=(event)=>{
@@ -27,24 +28,52 @@ export default class Login extends Component{
     }
 
     login=(event)=>{
-        fetch()
+        
+        console.log('aca no es')
+        const API = 'http://localhost:4000/api/users/login'
+
+        const postData = {
+            headers: {
+                'Accept' : 'application/json',
+                'Content-type': 'application/json',
+                'Origin': '*'//sigue fallando el puto cors
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                user: this.state.user,
+                mail: '',
+                pass: this.state.pass
+            })
+        }
+
+        fetch(API, postData)
         .then((res)=>{
             res.json()
         })
         .then((confirm)=>{
-            if (confirm.loged[0] === 'true'){//review this lineee!!!
+            if (confirm.login === 'true'){//review this lineee!!!
                 //redirect to user page and create session
+                console.log('conected')
             } else {
                 //display alert with "no user or not password matches"
+                console.log('not conected')
             }
         })
+        .catch((err)=>{
+            console.log('errorrrr: ', err)
+            this.setState({
+                resMsg: 'Connection failed: '+ err
+            })
+        })
+
+        event.preventDefault()
     }
     render(){
         return(
             <Fragment>
                 <h2 className='mb-3 text-center fw-bold'>Login</h2>
                 <div className='d-flex justify-content-center'>
-                    <form className='col-lg-3 col-md-6'>
+                    <form onSubmit={(submit)=>this.login(submit)} className='col-lg-3 col-md-6'>
                         <label className='fw-bold' htmlFor="user">User Name</label>
                         <input className='form-control mb-3'id='user'type="text" value={this.state.user} onChange={ (user)=>this.userChange(user) } />
 
@@ -57,7 +86,7 @@ export default class Login extends Component{
                         </div>
 
 
-                        <input className='fw-bold form-control mb-2 btn btn-lg btn-success'type="submit" value='Login'/>
+                        <input className='fw-bold form-control mb-2 btn btn-lg btn-success' type="submit" value='Login'/>
 
                         <Link className='text-center m-3 d-block' to='/forgot-password'>Forgot password?</Link>
                         <Link className='text-center m-3 d-block' to='/subscribe'>Create account</Link>

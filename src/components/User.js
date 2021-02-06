@@ -9,6 +9,23 @@ export default class User extends Component {
             password: 'asfadsgsdgsdfghdfg',
         }
     }
+    componentDidMount=()=>{
+        const API= 'http://localhost:4000/api/users'
+        const id= this.props.id //como la obtengo?? carajo...
+        fetch(API)
+            .then((users)=>{
+                return users.json()
+            })
+            .then((users)=>{
+                console.log(users)
+                const first = users[5]
+                this.setState({
+                    userName: first.user,
+                    mail: first.mail,
+                    password: first.pass
+                })
+            })
+    }
     render(){
         return(
             <section className='d-flex justify-content-center'>
