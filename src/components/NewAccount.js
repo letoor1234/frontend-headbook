@@ -56,7 +56,6 @@ export default class NewAccount extends Component {
                 transition: "all 1s"
             }
         })
-        console.log(this.state.alertStyle)
     }
     closeTerms=()=>{
         this.setState({
@@ -66,14 +65,18 @@ export default class NewAccount extends Component {
                 transition: "all 1s"
             }
         })
-        console.log(this.state.alertStyle)
+    }
+    register=(e)=>{
+        if(this.state.terms){
+            //execute the fetch
+        }
     }
     render(){
         return(
             <Fragment>
                 <h2 className='mb-3 text-center fw-bold'>Create account</h2>
                 <div className='d-flex justify-content-center'>           
-                    <form action="" className='col-lg-3 col-md-6'>
+                    <form onSubmit={(e)=>this.register(e)} className='col-lg-3 col-md-6'>
                         <label className='fw-bold' htmlFor="user">User name</label>
                         <input className='form-control mb-3' id='user'type="text" value={this.state.user} onChange={ (user)=>this.userChange(user) } />
 
@@ -88,7 +91,7 @@ export default class NewAccount extends Component {
 
                         <div className='form-check form-switch my-3'>
                             <input  className='form-check-input' id='accept-terms' type="checkbox"/>
-                            <label  onClick={()=>this.showTerms()} id='sub-view-terms' className='form-check-label text-muted'>I accept the <u>terms and conditions</u> of this site</label>
+                            <label  onClick={()=>this.showTerms()} id='sub-view-terms' className='btn btn-sm form-check-label text-muted'>I accept the <u>terms and conditions</u> of this site</label>
                         </div>
                         
                         <input  className='fw-bold form-control btn btn-lg btn-success' type="submit" value='Subscribe'/>
@@ -97,7 +100,7 @@ export default class NewAccount extends Component {
 
                 <Alert 
                     title="Terms and conditions of use"
-                    content="This is a site developed as a test. Every account will be deleted every saturday. We don't need your cookies, but we save your session when you login. When you logout, that session will destroyed."
+                    content="This is a site developed as a test. We don't need your cookies, but we save your session when you login. When you logout, that session will destroyed."
                     style= {this.state.alertStyle}
                     func= {this.closeTerms}
                 />

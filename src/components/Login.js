@@ -1,4 +1,5 @@
 import React, {Fragment, Component} from 'react'
+import Alert from './Alert'
 import {
     Redirect,
     Link
@@ -11,8 +12,24 @@ export default class Login extends Component{
             user: '',
             pass: '',
             resMsg: '',
-            redir: 'false'
+            redir: false,
+            session: false,
+            alert: '',
+            alertStyle: {
+                position: "absolute",
+                top: "-100%",
+                transition: "all 1s"
+            }
         }
+    }
+    closeTerms=()=>{
+        this.setState({
+            alertStyle: {
+                position: "absolute",
+                top: "-100%",
+                transition: "all 1s"
+            }
+        })
     }
     userChange=(event)=>{
         const text = event.target.value;
@@ -29,9 +46,13 @@ export default class Login extends Component{
         })
         
     }
-
+    inputChange=(e)=>{
+        this.setState({
+            session: !this.state.session
+        })
+        console.log(this.state.session)
+    }
     login=(event)=>{
-        console.log(this.state.pass)
         const API = 'http://localhost:4000/api/users/login'
 
         const postData = {
@@ -43,28 +64,48 @@ export default class Login extends Component{
             method: 'POST',
             body: JSON.stringify({
                 user: this.state.user,
-                mail: '',
-                pass: this.state.pass
+                pass: this.state.pass,
+                session: this.state.session
             })
         }
 
         fetch(API, postData)
         .then((res)=>{
-            console.log('aca no es')
-            console.log(res)
             return res.json()
         })
-        .then((confirm)=>{
-            if (confirm.login === 'true'){//review this lineee!!!
-                //redirect to user page and create session
+        .then((json)=>{
+            const confirm = json[0]
+            if(confirm.login === 'true'){
+                if (confirm.passMatch === 'true'){//review this lineee!!!
+                    //redirect to user page and create session
+                    this.setState({
+                        redir: 'true'
+                    })
+                    console.log('conected')
+                } else {
+                    //display alert with "no user or not password matches"
+                    this.setState({
+                        alert: 'Your password is incorrect! Try again or click in "Forgo password?"',
+                        alertStyle: {
+                            position: "absolute",
+                            top: "20%",
+                            transition: "all 1s"
+                        }
+                    })
+                    
+                    console.log('not conected')
+                }
+            } else{
                 this.setState({
-                    redir: 'true'
+                    alert: "This user isn't registered on database.",
+                    alertStyle: {
+                        position: "absolute",
+                        top: "20%",
+                        transition: "all 1s"
+                    }
                 })
-                console.log('conected')
-            } else {
-                //display alert with "no user or not password matches"
-                console.log('not conected')
             }
+            
         })
         .catch((err)=>{
             console.log('errorrrr: ', err)
@@ -76,7 +117,7 @@ export default class Login extends Component{
         event.preventDefault()
     }
     render(){
-        if(this.state.redir === 'false'){
+        if(!this.state.redir){
             return(
                 <Fragment>
                     <h2 className='mb-3 text-center fw-bold'>Login</h2>
@@ -89,17 +130,23 @@ export default class Login extends Component{
                             <input className='form-control mb-3'id='pass'type="password" value={this.state.pass} onChange={ (pass)=>this.passChange(pass) } />
     
                             <div className='form-check form-switch my-3'>
-                            <input id='stay-loged' className='form-check-input' type="checkbox"/>
-                            <label className='form-check-label'htmlFor="stay-loged">Stay session open</label>
+                            <input id='stay-loged' className='form-check-input' type="checkbox" onChange={(e)=>this.inputChange(e)} />
+                            <label className='form-check-label'htmlFor="stay-loged">Keep session started</label>
                             </div>
     
     
                             <input className='fw-bold form-control mb-2 btn btn-lg btn-success' type="submit" value='Login'/>
     
                             <Link className='text-center m-3 d-block' to='/forgot-password'>Forgot password?</Link>
-                            <Link className='text-center m-3 d-block' to='/subscribe'>Create account</Link>
+                            <Link className='text-center m-3 d-block' to='/register'>Create account</Link>
                         </form>
                     </div>
+                    <Alert 
+                        title= 'Fail!'
+                        content={this.state.alert}
+                        style= {this.state.alertStyle}
+                        func= {this.closeTerms}
+                    />
                 </Fragment>
             )
         } else{

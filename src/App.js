@@ -22,7 +22,7 @@ class App extends Component {
             func={this.login}
           />
         </Route>
-        <Route path='/subscribe'>
+        <Route path='/register'>
           <Header
             contentButton= 'Cancel'
             enableButton= 'true'
