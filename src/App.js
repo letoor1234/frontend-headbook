@@ -11,16 +11,18 @@ import User from './components/User'
 
 
 class App extends Component {
-  render(){
+   render(){
     return (
       <Router>
         <Route path='/' exact>
           <Header
             enableButton= 'false'
           />
-          <Login/>
+          <Login
+            func={this.login}
+          />
         </Route>
-        <Route path='/subscribe'>
+        <Route path='/register'>
           <Header
             contentButton= 'Cancel'
             enableButton= 'true'
