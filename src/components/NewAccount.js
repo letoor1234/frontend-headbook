@@ -15,13 +15,17 @@ export default class NewAccount extends Component {
             pass: '',
             cPass: '',
             confirmedPass: false,
-            cPAlert: '', 
             cPAlertColor: '',
+            cPassText: '',
             terms: false,
             alertStyle: {
                 position: "absolute",
                 top: "-100%",
                 transition: "all 1s"
+            },
+            alert2Text: {
+                title: '',
+                content: ''
             },
             alert2Style: {
                 position: "absolute",
@@ -32,6 +36,7 @@ export default class NewAccount extends Component {
         }
     }
     userChange=(event)=>{
+        //agregar confirmacion de nombre!!! (length)
         const text = event.target.value;
 
         this.setState({
@@ -39,6 +44,7 @@ export default class NewAccount extends Component {
         })
     }
     mailChange=(event)=>{
+        //agregar confirmacion de formato!!
         const text = event.target.value;
 
         this.setState({
@@ -46,6 +52,7 @@ export default class NewAccount extends Component {
         })
     }
     passChange=(event)=>{
+        //agregar dificultad y seguridad en la confirmacion!!
         const text = event.target.value;
 
         this.setState({
@@ -58,18 +65,18 @@ export default class NewAccount extends Component {
             cPass: text
         })
         if(text === this.state.pass){
-            console.log('coinciden')
+            
             this.setState({
                 confirmedPass: true,
-                cPAlert: '',
                 cPAlertColor: '',
+                cPassText: ""
             })
         } else{
-            console.log('no coinciden')
+            
             this.setState({
                 confirmedPass: false,
-                cPAlert: 'Passwords do not match',
                 cPAlertColor: ' btn-danger ',
+                cPassText: "Passwords do not match!"
             })
         }
         
@@ -129,21 +136,41 @@ export default class NewAccount extends Component {
                     return res.json()
                 })
                 .then((json)=>{
-					console.log(json)
-                    const confirm = json
-                    if(confirm.exists === 'true'){
-                        this.setState({
-                            alert2Style: {
-                                position: "absolute",
-                                top: "20%",
-                                transition: "all 1s"
+                    const user = json.user
+                    if(!user){
+                        if(!json.mailExist){
+                            if(json.userExist){
+                                //USER EXIST
+                                this.setState({
+                                    alert2Text:{
+                                        title: 'User already in use',
+                                        content: "This user is already register in the database, plase try with a diferent user name."
+                                    },
+                                    alert2Style: {
+                                        position: "absolute",
+                                        top: "20%",
+                                        transition: "all 1s"
+                                    }
+                                })
+                                console.log("el usuario ya existe")
                             }
-                        })
-                        
+                        } else{
+                            //MAIL EXISTS
+                            this.setState({
+                                alert2Text:{
+                                    title: 'Email already in use',
+                                    content: "This email adress is already register in the database."
+                                },
+                                alert2Style: {
+                                    position: "absolute",
+                                    top: "20%",
+                                    transition: "all 1s"
+                                }
+                            })
+                        }
                     } else{
-                        this.setState({
-                            red: true
-                        }) 
+                        //OK!!
+                        console.log(json);
                     }
                     
                 })
@@ -174,7 +201,7 @@ export default class NewAccount extends Component {
     
                             <label className='fw-bold' htmlFor="c-pass">Confirm password</label>
                             <input  className={'form-control mb-3'+this.state.cPAlertColor} id='c-pass'type="password" value={this.state.cPass} onChange={ (cPass)=>this.cPassChange(cPass) } />
-                            <p className='text-center text-danger'>{this.state.cPAlert} </p>
+                            <p className='text-center text-danger'>{this.state.cPassText} </p>
     
                             <div className='form-check form-switch my-3'>
                                 <input onChange={(e)=>this.inputChange(e)} className='form-check-input' id='accept-terms' type="checkbox"/>
@@ -192,8 +219,8 @@ export default class NewAccount extends Component {
                         func= {this.closeTerms}
                     />
                     <Alert 
-                        title="User already exists!"
-                        content="This user is already register in the database, plase try with a diferent user name."
+                        title={this.state.alert2Text.title}
+                        content={this.state.alert2Text.content}
                         style= {this.state.alert2Style}
                         func= {this.closeTerms}
                     />

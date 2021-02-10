@@ -74,46 +74,53 @@ export default class Login extends Component{
             return res.json()
         })
         .then((json)=>{
-            const confirm = json[0]
-            if(confirm.login === 'true'){
-                if (confirm.passMatch === 'true'){//review this lineee!!!
-                    //redirect to user page and create session
+            const user= json.user;
+            if(!user){
+                if(!json.userExist){
+                    //NO USER!!
+                    console.log("no existis gato");
                     this.setState({
-                        redir: 'true'
-                    })
-                    console.log('conected')
-                } else {
-                    //display alert with "no user or not password matches"
-                    this.setState({
-                        alert: 'Your password is incorrect! Try again or click in "Forgot password?"',
+                        alert: "This user isn't registered on database.",
                         alertStyle: {
                             position: "absolute",
                             top: "20%",
                             transition: "all 1s"
                         }
                     })
-                    
-                    console.log('not conected')
+                } else{
+                    //PASS INCORR
+                    if(!json.passVerified){
+                        console.log("password falsuki");
+                        this.setState({
+                            alert: 'Your password is incorrect! Try again or click in "Forgot password?"',
+                            alertStyle: {
+                                position: "absolute",
+                                top: "20%",
+                                transition: "all 1s"
+                            }
+                        })
+                    }
                 }
             } else{
-                this.setState({
-                    alert: "This user isn't registered on database.",
-                    alertStyle: {
-                        position: "absolute",
-                        top: "20%",
-                        transition: "all 1s"
-                    }
-                })
+                // OK!!!
+                //Redireccion aca tal veez;;
+                /*this.setState({
+                    redir: 'true'
+                })*/
+                console.log(json);
             }
-            
         })
         .catch((err)=>{
-            console.log('errorrrr: ', err)
             this.setState({
-                resMsg: 'Connection failed: '+ err
+                alert: 'Something went wrong when we connected to the database. ERR:'+{err},
+                alertStyle: {
+                    position: "absolute",
+                    top: "20%",
+                    transition: "all 1s"
+                }
             })
         })
-
+            
         event.preventDefault()
     }
     render(){
