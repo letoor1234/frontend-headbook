@@ -85,7 +85,7 @@ export default class Login extends Component{
                 } else {
                     //display alert with "no user or not password matches"
                     this.setState({
-                        alert: 'Your password is incorrect! Try again or click in "Forgo password?"',
+                        alert: 'Your password is incorrect! Try again or click in "Forgot password?"',
                         alertStyle: {
                             position: "absolute",
                             top: "20%",
@@ -131,7 +131,7 @@ export default class Login extends Component{
     
                             <div className='form-check form-switch my-3'>
                             <input id='stay-loged' className='form-check-input' type="checkbox" onChange={(e)=>this.inputChange(e)} />
-                            <label className='form-check-label'htmlFor="stay-loged">Keep session started</label>
+                            <label className='form-check-label'htmlFor="stay-loged">Keep logged in</label>
                             </div>
     
     
