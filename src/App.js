@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import {
   BrowserRouter as Router,
-  Route
+  Route,
+  Redirect
 } from 'react-router-dom'
 
 import Header from './components/Header'
@@ -11,16 +12,26 @@ import User from './components/User'
 
 
 class App extends Component {
-   render(){
+  _isMounted=false;
+  constructor(props){
+    super(props)
+    this.state={
+      redir: false,
+      userName: '',
+      mail: '',
+      password: '',
+      alert: ''
+    }
+  }
+  
+  render(){
     return (
       <Router>
         <Route path='/' exact>
           <Header
             enableButton= 'false'
           />
-          <Login
-            func={this.login}
-          />
+          <Login/>
         </Route>
         <Route path='/register'>
           <Header
@@ -30,13 +41,20 @@ class App extends Component {
           />
           <NewAccount/>
         </Route>
-        <Route path='/user'>
+        <Route path='/user' exact>
           <Header
             contentButton= 'Log Out'
             enableButton= 'true'
             classButton= 'btn-danger'
+            logout='true'
+            logFunc={this.logOut}
           />
-          <User/>
+          <User
+            user= {this.state.userName}
+            mail={this.state.mail}
+            pass={this.state.password}
+            alert={this.state.alert}
+          />
         </Route>
       </Router>
     );

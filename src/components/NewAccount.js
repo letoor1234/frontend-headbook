@@ -32,8 +32,33 @@ export default class NewAccount extends Component {
                 top: "-100%",
                 transition: "all 1s"
             },
-            red: false
+            redir: false
         }
+    }
+    componentDidMount=()=>{
+        this._isMounted= true;
+        const API= 'http://localhost:4000/api/users/auth'
+        const id= this.props.id // en el server es req.user// aca deberia ser res.user
+        fetch(API, {credentials: 'include'})
+            .then((res)=>{
+                return res.json()
+            })
+            .then((json)=>{
+              if(this._isMounted){
+                if(!json.user){
+                  this.setState({
+                    redir: false,
+                  })
+                } else{
+                  this.setState({
+                    redir: true,
+                 })
+                }
+              }       
+            })
+    }
+    componentWillUnmount=()=>{
+        this._isMounted=false;
     }
     userChange=(event)=>{
         //agregar confirmacion de nombre!!! (length)
@@ -127,7 +152,8 @@ export default class NewAccount extends Component {
                     mail: this.state.mail,
                     pass: this.state.pass,
                     
-                })
+                }),
+                credentials:'include'
             }
 
             fetch(API, postData)
@@ -142,6 +168,7 @@ export default class NewAccount extends Component {
                             if(json.userExist){
                                 //USER EXIST
                                 this.setState({
+                                    redir: false,
                                     alert2Text:{
                                         title: 'User already in use',
                                         content: "This user is already register in the database, plase try with a diferent user name."
@@ -157,6 +184,7 @@ export default class NewAccount extends Component {
                         } else{
                             //MAIL EXISTS
                             this.setState({
+                                redir: false,
                                 alert2Text:{
                                     title: 'Email already in use',
                                     content: "This email adress is already register in the database."
@@ -169,6 +197,9 @@ export default class NewAccount extends Component {
                             })
                         }
                     } else{
+                        this.setState({
+                            redir: true
+                        })
                         //OK!!
                         console.log(json);
                     }
@@ -184,7 +215,7 @@ export default class NewAccount extends Component {
         e.preventDefault()
     }
     render(){
-        if(!this.state.red){
+        if(!this.state.redir){
             return(
                 <Fragment>
                     <h2 className='mb-3 text-center fw-bold'>Create account</h2>

@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 export default class Login extends Component{
+    _isMounted=false;
     constructor(props){
         super(props)
         this.state={
@@ -13,7 +14,6 @@ export default class Login extends Component{
             pass: '',
             resMsg: '',
             redir: false,
-            session: false,
             alert: '',
             alertStyle: {
                 position: "absolute",
@@ -21,6 +21,31 @@ export default class Login extends Component{
                 transition: "all 1s"
             }
         }
+    }
+    componentDidMount=()=>{
+        this._isMounted= true;
+        const API= 'http://localhost:4000/api/users/auth'
+        const id= this.props.id // en el server es req.user// aca deberia ser res.user
+        fetch(API, {credentials: 'include'})
+            .then((res)=>{
+                return res.json()
+            })
+            .then((json)=>{
+              if(this._isMounted){
+                if(!json.user){
+                  this.setState({
+                    redir: false,
+                  })
+                } else{
+                  this.setState({
+                    redir: true,
+                 })
+                }
+              }       
+            })
+    }
+    componentWillUnmount=()=>{
+        this._isMounted=false;
     }
     closeTerms=()=>{
         this.setState({
@@ -46,12 +71,6 @@ export default class Login extends Component{
         })
         
     }
-    inputChange=(e)=>{
-        this.setState({
-            session: !this.state.session
-        })
-        console.log(this.state.session)
-    }
     login=(event)=>{
         const API = 'http://localhost:4000/api/users/login'
 
@@ -65,8 +84,8 @@ export default class Login extends Component{
             body: JSON.stringify({
                 user: this.state.user,
                 pass: this.state.pass,
-                session: this.state.session
-            })
+            }),
+			credentials:'include'
         }
 
         fetch(API, postData)
@@ -102,12 +121,9 @@ export default class Login extends Component{
                     }
                 }
             } else{
-                // OK!!!
-                //Redireccion aca tal veez;;
-                /*this.setState({
-                    redir: 'true'
-                })*/
-                console.log(json);
+                this.setState({
+                    redir: true
+                })
             }
         })
         .catch((err)=>{
@@ -136,10 +152,7 @@ export default class Login extends Component{
                             <label className='fw-bold' htmlFor="password">Password</label>
                             <input className='form-control mb-3'id='pass'type="password" value={this.state.pass} onChange={ (pass)=>this.passChange(pass) } />
     
-                            <div className='form-check form-switch my-3'>
-                            <input id='stay-loged' className='form-check-input' type="checkbox" onChange={(e)=>this.inputChange(e)} />
-                            <label className='form-check-label'htmlFor="stay-loged">Keep logged in</label>
-                            </div>
+                            
     
     
                             <input className='fw-bold form-control mb-2 btn btn-lg btn-success' type="submit" value='Login'/>
